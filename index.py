@@ -8,33 +8,18 @@
 import sys
 
 import tkinter as tk
-import tkinter.ttk as ttk
+from models.path import Path
+from controller import Controller
+from functools import partial
 
 def vp_start_gui():
-    '''Starting point when module is the main routine.'''
-    global val, w, root
     root = tk.Tk()
-    top = MainPanel (root)
+    MainPanel (root)
     root.mainloop()
 
-w = None
-def create_MainPanel(rt, *args, **kwargs):
-    '''Starting point when module is imported by another module.
-       Correct form of call: 'create_MainPanel(root, *args, **kwargs)' .'''
-    global w, w_win, root
-    #rt = root
-    root = rt
-    w = tk.Toplevel (root)
-    top = MainPanel (w)
-    return (w, top)
-
-def destroy_MainPanel():
-    global w
-    w.destroy()
-    w = None
-
 class MainPanel:
-    def __init__(self, top=None):
+    def __init__(self, top: tk.Tk):
+        self.controller = Controller()
         '''This class configures and populates the toplevel window.
            top is the toplevel containing window.'''
         _bgcolor = '#d9d9d9'  # X11 color: 'gray85'
@@ -89,6 +74,8 @@ class MainPanel:
         self.RefButton.configure(highlightcolor="black")
         self.RefButton.configure(pady="0")
         self.RefButton.configure(text='''参照''')
+        self.RefButton.configure(command=partial(self.controller.onClickFolderRef, self.SaveFolderEntry))
+        self.SaveFolderEntry.insert(0, "a")
 
         self.Title = tk.Label(top)
         self.Title.place(relx=0.244, rely=0.0, height=41, width=234)
@@ -113,6 +100,7 @@ class MainPanel:
         self.RangeButton.configure(highlightcolor="black")
         self.RangeButton.configure(pady="0")
         self.RangeButton.configure(text='''範囲指定''')
+        self.RangeButton.configure(command=self.controller.onClickRangeBtn)
 
         self.Label2 = tk.Label(top)
         self.Label2.place(relx=0.12, rely=0.286, height=21, width=54)
