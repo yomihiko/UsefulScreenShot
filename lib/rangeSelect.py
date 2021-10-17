@@ -1,6 +1,7 @@
 from tkinter.constants import X
 from screeninfo import get_monitors
 import tkinter
+import threading
 
 ADJUST_DISPLAY = 5 #表示調整定数
 
@@ -23,7 +24,7 @@ class RangeSelect:
 
     #画面範囲選択メイン処理
     #返り値：開始x, 開始y, 終了x, 終了y
-    def rangeSelect(self):
+    def rangeSelect(self, callback):
 
 
         # 表示画面全体を半透明の黒色にする
@@ -41,11 +42,8 @@ class RangeSelect:
 
         canvas.bind("<ButtonPress-1>", lambda e: self.start_point_get(e, canvas))
         canvas.bind("<Button1-Motion>", lambda e: self.rect_drawing(e, canvas))
-        canvas.bind("<ButtonRelease-1>", lambda e: self.release_action(e, root, canvas))
-
+        canvas.bind("<ButtonRelease-1>", lambda e: self.release_action(e, root, canvas, callback))
         root.mainloop()
-
-        return self.__startX, self.__startY, self.__endX, self.__endY
 
     # クリック開始時
     def start_point_get(self, event, canvas):
@@ -74,15 +72,17 @@ class RangeSelect:
         canvas.coords("range", self.__startX, self.__startY, self.__endX, self.__endY)
 
     # ドラッグを離したときのイベント - - - - - - - - - - - - - - - - - - - - - - - - - - 
-    def release_action(self, event, root, canvas):
+    def release_action(self, event, root, canvas, callback):
 
         self.__startX, self.__startY, self.__endX, self.__endY = [
             round(n - ADJUST_DISPLAY) for n in canvas.coords("range")
         ]
+        callback(self.__startX, self.__startY, self.__endX, self.__endY)
         root.destroy()
     
     #Escキーが押された時の処理
-    def pressEsc(self, root):
+    def pressEsc(self, root, callback):
         self.__startX, self.__startY, self.__endX, self.__endY = 0, 0, 0, 0 #Esc押下時は未選択として扱う
+        callback(self.__startX, self.__startY, self.__endX, self.__endY)
         root.destroy()
     

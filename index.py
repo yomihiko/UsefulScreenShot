@@ -6,6 +6,7 @@
 #    Oct 16, 2021 02:09:06 PM JST  platform: Windows NT
 
 import sys
+import threading
 
 import tkinter as tk
 from models.path import Path
@@ -19,7 +20,6 @@ def vp_start_gui():
 
 class MainPanel:
     def __init__(self, top: tk.Tk):
-        self.controller = Controller()
         '''This class configures and populates the toplevel window.
            top is the toplevel containing window.'''
         _bgcolor = '#d9d9d9'  # X11 color: 'gray85'
@@ -34,6 +34,7 @@ class MainPanel:
         top.configure(background="#d9d9d9")
         top.configure(highlightbackground="#d9d9d9")
         top.configure(highlightcolor="black")
+        top.protocol("WM_DELETE_WINDOW", lambda: self.controller.shutDown(top))
 
         self.SaveFolderEntry = tk.Entry(top)
         self.SaveFolderEntry.place(relx=0.244, rely=0.186, height=20
@@ -74,7 +75,7 @@ class MainPanel:
         self.RefButton.configure(highlightcolor="black")
         self.RefButton.configure(pady="0")
         self.RefButton.configure(text='''参照''')
-        self.RefButton.configure(command=partial(self.controller.onClickFolderRef, self.SaveFolderEntry))
+        self.RefButton.configure(command=lambda: self.controller.onClickFolderRef(self.SaveFolderEntry))
         self.SaveFolderEntry.insert(0, "a")
 
         self.Title = tk.Label(top)
@@ -100,7 +101,7 @@ class MainPanel:
         self.RangeButton.configure(highlightcolor="black")
         self.RangeButton.configure(pady="0")
         self.RangeButton.configure(text='''範囲指定''')
-        self.RangeButton.configure(command=self.controller.onClickRangeBtn)
+        self.RangeButton.configure(command=lambda: self.controller.onClickRangeBtn())
 
         self.Label2 = tk.Label(top)
         self.Label2.place(relx=0.12, rely=0.286, height=21, width=54)
@@ -117,6 +118,11 @@ class MainPanel:
         self.FileNameEntry.configure(font="TkFixedFont")
         self.FileNameEntry.configure(foreground="#000000")
         self.FileNameEntry.configure(insertbackground="black")
+        self.FileNameEntry.bind("<Return>", lambda e: self.controller.saveFileNameFormat(e, self.FileNameEntry))
+
+        self.controller = Controller()
+
+        self.FileNameEntry.insert(0, self.controller.image.fileNameFormat)
 
 if __name__ == '__main__':
     vp_start_gui()

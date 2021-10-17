@@ -1,5 +1,6 @@
 import tkinter
 from lib.rangeSelect import RangeSelect
+from threading import Lock
 class ScreenRange:
     def __init__(self):
         self.startX = 0
@@ -9,4 +10,7 @@ class ScreenRange:
 
     def changeRange(self):
         rangeSelect = RangeSelect()
-        self.startX, self.startY, self.endX, self.endY = rangeSelect.rangeSelect()
+        rangeSelect.rangeSelect(self.callbackRange)
+
+    def callbackRange(self, sx, sy, ex, ey):
+        self.startX, self.startY, self.endX, self.endY = sx, sy, ex, ey
