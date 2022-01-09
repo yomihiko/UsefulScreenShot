@@ -1,12 +1,8 @@
 import tkinter
 from models.path import Path
 from tkinter import Entry
-from tkinter import filedialog
 from models.screenRange import ScreenRange
 from models.image import Image
-
-
-import msvcrt
 import threading
 
 
@@ -16,8 +12,8 @@ class Controller:
         self.image = Image()
         self.screenRange = ScreenRange()
 
-        self.image.saveFileNameFormat(fileNameFormat='{nnn}.png')
-        self.daemon = WaitScreenShotThread(self.image, self.screenRange)
+        self.image.saveFileNameFormat(fileNameFormat='scr')
+        self.daemon = WaitScreenShotThread(self.image, self.screenRange, self.path)
         self.daemon.start()
 
 
@@ -40,10 +36,11 @@ class Controller:
         root.destroy()
 
 class WaitScreenShotThread(threading.Thread):
-    def __init__(self, im: Image, sr: ScreenRange):
+    def __init__(self, im: Image, sr: ScreenRange, path: Path):
         super(WaitScreenShotThread, self).__init__(target=self, daemon=True)
         self.im = im
         self.sr = sr
+        self.path = path
 
     def run(self):
         f = open('screentime', 'r')
@@ -54,6 +51,6 @@ class WaitScreenShotThread(threading.Thread):
             text2 = f.read()
             f.close()
             if(text2 != "" and  text != text2):
-                self.im.screenShot(self.sr)
+                self.im.screenShot(self.sr, self.path)
                 text = text2
                 
