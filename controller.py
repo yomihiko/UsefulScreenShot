@@ -29,7 +29,6 @@ class Controller:
         pathEntry.configure(state="readonly")
 
     def onClickRangeBtn(self):
-        print(self.screenRange.startX)
         self.screenRange.changeRange()
 
     def saveFileNameFormat(self, event, fileNameEntry: Entry):

@@ -4,10 +4,6 @@ from rangeSelect import RangeSelect
 
 r = RangeSelect()
 a, b, c, d = r.rangeSelect()
-print(a)
-print(b)
-print(c)
-print(d)
 
 im = ImageGrab.grab(all_screens=True, bbox=(a, b, c, d))
 im.save("aaa.png")

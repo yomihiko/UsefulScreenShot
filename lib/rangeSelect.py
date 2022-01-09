@@ -33,20 +33,20 @@ class RangeSelect:
         root.overrideredirect(1)
         root.attributes("-alpha", 0.5)
         root.configure(background="black")
-        root.bind('<Escape>',lambda e: self.pressEsc(root))
+        root.bind('<Escape>',lambda e: self.pressEsc(root, callback))
 
 
         # 赤枠の描画
         canvas = tkinter.Canvas(root, bg="black", width=self.__width, height=self.__height)
         canvas.place(relx=0, rely=0)
 
-        canvas.bind("<ButtonPress-1>", lambda e: self.start_point_get(e, canvas))
+        canvas.bind("<ButtonPress-1>", lambda e: self.rangeStart(e, canvas))
         canvas.bind("<Button1-Motion>", lambda e: self.rect_drawing(e, canvas))
         canvas.bind("<ButtonRelease-1>", lambda e: self.release_action(e, root, canvas, callback))
         root.mainloop()
 
     # クリック開始時
-    def start_point_get(self, event, canvas):
+    def rangeStart(self, event, canvas):
 
         canvas.delete("range")  # 赤枠があれば削除
 
